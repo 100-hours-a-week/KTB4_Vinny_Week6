@@ -3,77 +3,61 @@ package com.vinny.project.user;
 import com.vinny.project.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.DuplicateFormatFlagsException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class UserRepository {
-    private final List<User> users = new ArrayList<>();
+    private final Map<String, User> users = new ConcurrentHashMap<>();
 
     public UserRepository(){
-        users.add(new User("1", "test1@gmail.com", "1AbC!cccccc", "vinny", ""));
-        users.add(new User("2", "test2@gmail.com", "1AbC!cccccc", "selina", ""));
-        users.add(new User("3", "test3@gmail.com", "1AbC!cccccc", "jun", ""));
+        users.put("1", new User("1", "test1@gmail.com", "1AbC!cccccc", "vinny", ""));
+        users.put("2",new User("2", "test2@gmail.com", "1AbC!cccccc", "selina", ""));
+        users.put("3",new User("3", "test3@gmail.com", "1AbC!cccccc", "jun", ""));
     }
 
-    public void save(User user){
+    public void save(String userId, User user){
         if(existsById(user.getId()) || existsByEmail(user.getEmail()) || existsByNickName(user.getNickname())){
             // 예외 띄우기
             throw new DuplicateFormatFlagsException(user.getId() + " already exists");
         }
-        users.add(user);
+        users.put(user.getId(), user);
     }
 
     public User findById(String id){
-        for(User user : users){
-            if(user.getId().equals(id)){
-                return user;
-            }
+        if(existsById(id)){
+           return users.get(id);
+        } else {
+            throw new UserNotFoundException(id);
         }
-        throw new UserNotFoundException(id);
     }
 
     public List<User> findAll(){
-        return users;
+        return new ArrayList<>(users.values());
     }
 
     public boolean existsById(String id){
-        for(User user : users){
-            if(user.getId().equals(id)){
-                return true;
-            }
+        if(users.containsKey(id)){
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public boolean existsByEmail(String email) {
-        for (User user : users) {
-            if (user.getEmail().equals(email)) {
-                return true;
-            }
+        if(users.containsKey(email)){
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
-
 
     public boolean existsByNickName(String nickName){
-        for(User user : users){
-            if(user.getNickname().equals(nickName)){
-                return true;
-            }
+        if(users.containsKey(nickName)){
+            return true;
+        } else {
+            return false;
         }
-        return false;
-    }
-
-    public User update(String id, User newUser) {
-        User user = findById(id);
-
-        user.setNickname(newUser.getNickname());
-        user.setPassword(newUser.getPassword());
-        user.setProfileImageUrl(newUser.getProfileImageUrl());
-        return user;
     }
 
     public void delete(String id){

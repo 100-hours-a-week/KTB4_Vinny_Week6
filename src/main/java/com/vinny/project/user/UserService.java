@@ -20,9 +20,10 @@ public class UserService {
     }
 
     public User addUser(UserCreateRequest request){
+        String userId = UUID.randomUUID().toString();
         //비밀번호 해시처리 필요
-        User user = new User(UUID.randomUUID().toString(), request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileImageUrl());
-        userRepository.save(user);
+        User user = new User(userId, request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileImageUrl());
+        userRepository.save(userId, user);
 
         return user;
     }
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     public void patch(String id, @RequestBody UserPatchRequest request){
-        User user = userRepository.findById(id);
+        User user = findById(id);
 
         if(user == null){
             return;
