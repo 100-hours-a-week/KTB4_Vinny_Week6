@@ -1,5 +1,6 @@
 package com.vinny.project.user;
 
+import com.vinny.project.user.exception.DuplicateNickname;
 import com.vinny.project.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
@@ -17,10 +18,6 @@ public class UserRepository {
     }
 
     public void save(String userId, User user){
-        if(existsById(user.getId()) || existsByEmail(user.getEmail()) || existsByNickName(user.getNickname())){
-            // 예외 띄우기
-            throw new DuplicateFormatFlagsException(user.getId() + " already exists");
-        }
         users.put(user.getId(), user);
     }
 
@@ -28,7 +25,7 @@ public class UserRepository {
         if(existsById(id)){
            return users.get(id);
         } else {
-            throw new UserNotFoundException(id);
+            throw new UserNotFoundException();
         }
     }
 
@@ -52,8 +49,8 @@ public class UserRepository {
         }
     }
 
-    public boolean existsByNickName(String nickName){
-        if(users.containsKey(nickName)){
+    public boolean existsByNickname(String nickname){
+        if(users.containsKey(nickname)){
             return true;
         } else {
             return false;

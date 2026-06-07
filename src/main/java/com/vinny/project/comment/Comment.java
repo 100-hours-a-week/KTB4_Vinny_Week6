@@ -1,11 +1,16 @@
 package com.vinny.project.comment;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class Comment {
     private String writerId;
     private String postId;
     private String commentId;
+    @Setter
     private String content;
     private LocalDateTime createdAt;
 
@@ -16,29 +21,4 @@ public class Comment {
         this.content = content;
         this.createdAt = createdAt;
     }
-
-    public String getWriterId() {
-        return writerId;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public String getCommentId() {
-        return commentId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
 }

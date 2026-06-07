@@ -6,7 +6,6 @@ public class UserPatchRequest {
     //@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$")
     private String password;
 
-    //유니크 검증?
     private String nickname;
     private String profileImageUrl;
 

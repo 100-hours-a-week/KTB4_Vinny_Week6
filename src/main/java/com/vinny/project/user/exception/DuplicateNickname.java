@@ -3,8 +3,8 @@ package com.vinny.project.user.exception;
 import com.vinny.project.exception.BusinessException;
 import com.vinny.project.exception.ErrorCode;
 
-public class UserNotFoundException extends BusinessException {
-    public UserNotFoundException() {
-        super(ErrorCode.USER_NOT_FOUND);
+public class DuplicateNickname extends BusinessException {
+    public DuplicateNickname() {
+        super(ErrorCode.DUPLICATE_NICKNAME);
     }
 }

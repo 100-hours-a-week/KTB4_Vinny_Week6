@@ -1,7 +1,9 @@
 package com.vinny.project.post.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
+@Getter
 public class PostCreateRequest {
     @NotBlank
     private String title;
@@ -9,18 +11,6 @@ public class PostCreateRequest {
     @NotBlank
     private String content;
 
-    //@NotBlank
+    @NotBlank
     private String postImageUrl;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getPostImageUrl() {
-        return postImageUrl;
-    }
 }

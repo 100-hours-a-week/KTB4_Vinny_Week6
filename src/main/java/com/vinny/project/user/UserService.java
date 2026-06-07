@@ -1,8 +1,12 @@
 package com.vinny.project.user;
 
+import com.vinny.project.exception.BusinessException;
+import com.vinny.project.exception.ErrorCode;
 import com.vinny.project.user.dto.request.UserCreateRequest;
 import com.vinny.project.user.dto.request.UserPatchRequest;
 import com.vinny.project.user.dto.request.UserSignInRequest;
+import com.vinny.project.user.dto.response.UserIdResponse;
+import com.vinny.project.user.exception.DuplicateNickname;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +23,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User addUser(UserCreateRequest request){
+    public UserIdResponse addUser(UserCreateRequest request){
+        if(userRepository.existsByEmail(request.getEmail()) || userRepository.existsByNickname(request.getNickname())){
+            throw new DuplicateNickname();
+        }
         String userId = UUID.randomUUID().toString();
-        //비밀번호 해시처리 필요
         User user = new User(userId, request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileImageUrl());
         userRepository.save(userId, user);
 
-        return user;
+        return new UserIdResponse(user);
     }
 
     public User signIn(@Valid @RequestBody UserSignInRequest request){

@@ -29,10 +29,10 @@ public class CommentRepository {
         if (comments.containsKey(id)) {
             return comments.get(id);
         } else {
-            throw new CommentNotFoundException(id);
+            throw new CommentNotFoundException();
         }
     }
-    // 게시글 번호 맞춰서 출력해주는 중요 메서드
+
     public List<Comment> findByPostId(String postId) {
         return comments.values().stream()
                 .filter(comment -> comment.getPostId().equals(postId))

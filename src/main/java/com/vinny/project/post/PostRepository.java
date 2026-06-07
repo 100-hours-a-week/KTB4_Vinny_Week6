@@ -2,6 +2,7 @@ package com.vinny.project.post;
 
 import com.vinny.project.post.exception.PostNotFoundException;
 import com.vinny.project.user.User;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,9 +17,9 @@ public class PostRepository {
     private final Map<String, Post> posts = new  ConcurrentHashMap<>();
 
     public PostRepository() {
-        posts.put("1", new Post("1","1", "title1", "content1", "1", LocalDateTime.now(),1,1,1));
-        posts.put("2", new Post("1","2", "title2", "content2", "2", LocalDateTime.now(),2,2,2));
-        posts.put("3", new Post("2","3", "title3", "content3", "3", LocalDateTime.now(),3,3,3));
+        for(int i = 1; i <= 10; i++) {
+            posts.put(String.valueOf(i), new Post("1", String.valueOf(i), "title"+String.valueOf(i), "content"+String.valueOf(i),"", LocalDateTime.now(), i, i, i));
+        }
     }
 
     public void save(String id, Post post) {
@@ -29,7 +30,7 @@ public class PostRepository {
         if(posts.containsKey(id)){
             return posts.get(id);
         } else {
-            throw new PostNotFoundException(id);
+            throw new PostNotFoundException();
         }
     }
 

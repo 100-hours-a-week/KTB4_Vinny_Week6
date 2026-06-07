@@ -1,9 +1,10 @@
 package com.vinny.project.comment.dto.request;
 
-public class CommentCreateRequest {
-    private String content;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
-    public String getContent() {
-        return content;
-    }
+@Getter
+public class CommentCreateRequest {
+    @NotBlank
+    private String content;
 }

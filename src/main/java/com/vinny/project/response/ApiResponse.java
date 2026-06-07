@@ -1,7 +1,10 @@
 package com.vinny.project.response;
 
-public class ApiResponse<T> {
+import com.vinny.project.exception.ErrorCode;
+import lombok.Getter;
 
+@Getter
+public class ApiResponse<T> {
     private boolean success;
     private T data;
     private String message;
@@ -16,19 +19,11 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, data, null);
     }
 
-    public static <T> ApiResponse<T> fail(String message) {
-        return new ApiResponse<>(false, null, message);
+    public static <T> ApiResponse<T> created(T data) {
+        return new ApiResponse<>(true, data, null);
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public String getMessage() {
-        return message;
+    public static <T> ApiResponse<T> fail(ErrorCode errorCode) {
+        return new ApiResponse<>(false, null, errorCode.getMessage());
     }
 }
