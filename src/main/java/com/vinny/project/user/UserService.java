@@ -64,7 +64,9 @@ public class UserService {
 
     public UserSummary patchProfile(String id, @RequestBody UserPatchProfileRequest request){
         User user = findById(id);
-
+        if(userRepository.existsByNickname(request.getNickname())){
+            throw new DuplicateNicknameException();
+        }
         user.setNickname(request.getNickname());
         user.setProfileImageUrl(request.getProfileImageUrl());
 

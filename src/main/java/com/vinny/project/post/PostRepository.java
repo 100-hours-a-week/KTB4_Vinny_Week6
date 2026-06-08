@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class PostRepository {
-    private final Map<String, Post> posts = new  ConcurrentHashMap<>();
+    private static final Map<String, Post> posts = new  ConcurrentHashMap<>();
 
     public PostRepository() {
-        for(int i = 1; i <= 10; i++) {
+        for(int i = 1; i <= 3; i++) {
             posts.put(String.valueOf(i), new Post("1", String.valueOf(i), "title"+String.valueOf(i), "content"+String.valueOf(i),"", LocalDateTime.now(), i, i, i));
         }
     }
@@ -33,6 +33,10 @@ public class PostRepository {
 
     public List<Post> findAll() {
         return new ArrayList<>(posts.values());
+    }
+
+    public boolean existsById(String id) {
+        return posts.containsKey(id);
     }
 
     public void delete(String id) {

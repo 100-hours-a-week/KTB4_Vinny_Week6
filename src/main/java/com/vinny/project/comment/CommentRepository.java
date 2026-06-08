@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class CommentRepository {
-    private final Map<String, Comment> comments = new ConcurrentHashMap<>();
+    private static final Map<String, Comment> comments = new ConcurrentHashMap<>();
 
     public CommentRepository() {
-        for(int i =1; i<= 20; i++){
+        for(int i =1; i<= 3; i++){
             comments.put(String.valueOf(i), new Comment("1","1",String.valueOf(i),"comment"+i, LocalDateTime.now()));
         }
     }
@@ -28,6 +28,10 @@ public class CommentRepository {
         } else {
             throw new CommentNotFoundException();
         }
+    }
+
+    public boolean existById(String id) {
+        return comments.containsKey(id);
     }
 
     public ArrayList<Comment> findAll() {

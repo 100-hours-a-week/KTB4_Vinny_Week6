@@ -4,6 +4,7 @@ import com.vinny.project.post.dto.request.PostCreateRequest;
 import com.vinny.project.post.dto.response.PostDetailResponse;
 import com.vinny.project.post.dto.response.PostListResponse;
 import com.vinny.project.response.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ApiResponse<Post> createPost(@RequestBody PostCreateRequest request) {
+    public ApiResponse<Post> createPost(@Valid @RequestBody PostCreateRequest request) {
         return ApiResponse.success(postService.createPost(request));
     }
 
@@ -35,7 +36,7 @@ public class PostController {
     }
 
     @PatchMapping("/{id}")
-    public ApiResponse<PostDetailResponse> updatePost(@PathVariable String id, @RequestBody PostCreateRequest request) {
+    public ApiResponse<PostDetailResponse> updatePost(@PathVariable String id, @Valid @RequestBody PostCreateRequest request) {
         return ApiResponse.success(postService.patch(id, request));
     }
 

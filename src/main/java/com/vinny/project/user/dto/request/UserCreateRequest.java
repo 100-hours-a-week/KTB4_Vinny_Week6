@@ -1,8 +1,6 @@
 package com.vinny.project.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
@@ -17,6 +15,6 @@ public class UserCreateRequest {
     @NotBlank
     private String nickname;
 
-    @Pattern(regexp = "^(default\\.png|(https?://).*\\.(jpg|jpeg|png|gif|webp))$")
+    @Pattern(regexp = "^$|^(default\\.png|(https?://).*\\.(jpg|jpeg|png|gif|webp))$", message = "이미지는 default.png 또는 URL 형식이어야 합니다.")
     private String profileImageUrl;
 }

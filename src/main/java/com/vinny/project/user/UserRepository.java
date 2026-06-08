@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class UserRepository {
-    private final Map<String, User> users = new ConcurrentHashMap<>();
+    private static Map<String, User> users = new ConcurrentHashMap<>();
 
     public UserRepository(){
         users.put("1", new User("1", "test1@gmail.com", "1", "vinny", ""));
@@ -53,7 +53,7 @@ public class UserRepository {
 
     public boolean existsByNickname(String nickname){
         return users.values().stream()
-                .anyMatch(user -> user.getEmail().equals(nickname));
+                .anyMatch(user -> user.getNickname().equals(nickname));
     }
 
     public void delete(String id){

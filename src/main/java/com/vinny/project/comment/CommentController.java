@@ -4,6 +4,7 @@ package com.vinny.project.comment;
 import com.vinny.project.comment.dto.request.CommentCreateRequest;
 import com.vinny.project.comment.dto.response.CommentResponse;
 import com.vinny.project.response.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +15,13 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    public CommentController(CommentRepository commentRepository, CommentService commentService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 
     @PostMapping
-    public Comment createComment(@PathVariable String postId, @RequestBody CommentCreateRequest request){
-        return commentService.createComment(postId, request);
+    public ApiResponse<CommentResponse> createComment(@PathVariable String postId, @Valid @RequestBody CommentCreateRequest request){
+        return ApiResponse.success(commentService.createComment(postId, request));
     }
 
     @GetMapping
@@ -29,13 +30,13 @@ public class CommentController {
     }
 
     @PatchMapping("/{commentId}")
-    public ApiResponse<CommentResponse> updateComment(@PathVariable String commentId, @RequestBody CommentCreateRequest request){
-        return ApiResponse.success(commentService.patch(commentId, request));
+    public ApiResponse<CommentResponse> updateComment(@PathVariable String postId, @PathVariable String commentId,@Valid  @RequestBody CommentCreateRequest request){
+        return ApiResponse.success(commentService.patch(postId, commentId, request));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable String commentId, @PathVariable String postId){
-        commentService.delete(commentId);
+    public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId){
+        commentService.delete(postId, commentId);
         return ResponseEntity.noContent().build();
     }
 
