@@ -63,8 +63,8 @@ class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id){
+    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable String id){
         userService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("/sign-in"));
     }
 }

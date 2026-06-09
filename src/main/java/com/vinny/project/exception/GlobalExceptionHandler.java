@@ -19,16 +19,8 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
 
-        BindingResult bindingResult = e.getBindingResult();
-
-        String errorMessage = "잘못된 요청입니다.";
-        if (bindingResult.hasErrors()) {
-            FieldError fieldError = bindingResult.getFieldErrors().get(0);
-            errorMessage = fieldError.getDefaultMessage();
-        }
-        ApiResponse<Void> response = ApiResponse.fail(ErrorCode.INVALID_INPUT_VALUE);
-
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(ApiResponse.fail(errorMessage));
     }
 }

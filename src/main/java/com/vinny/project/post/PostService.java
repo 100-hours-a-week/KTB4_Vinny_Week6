@@ -26,7 +26,7 @@ public class PostService {
 
     public Post createPost(PostCreateRequest request) {
         String id = UUID.randomUUID().toString();
-        Post post = new Post("1", id, request.getTitle(),request.getContent(), request.getPostImageUrl(), LocalDateTime.now(), 0, 0, 0);
+        Post post = new Post("1", id, request.getTitle(), request.getContent(), request.getPostImageUrl(), LocalDateTime.now(), 0, 0, 0);
         postRepository.save(id, post);
         return post;
     }
@@ -73,10 +73,10 @@ public class PostService {
 
     public PostDetailResponse patch(String id, @RequestBody PostCreateRequest request) {
         Post post = postRepository.findById(id);
-        User user =  userService.findById(post.getWriterId());
+        User user = userService.findById(post.getWriterId());
         UserSummary writerSummary = new UserSummary(user.getNickname(), user.getProfileImageUrl());
 
-        if(post == null){
+        if (post == null) {
             throw new PostNotFoundException();
         }
         post.setTitle(request.getTitle());
@@ -95,7 +95,7 @@ public class PostService {
         );
     }
 
-    public void delete(String id){
+    public void delete(String id) {
         postRepository.delete(id);
     }
 }

@@ -10,6 +10,7 @@ import com.vinny.project.user.dto.request.UserSignInRequest;
 import com.vinny.project.user.dto.response.SignInResponse;
 import com.vinny.project.user.dto.response.UserIdResponse;
 import com.vinny.project.user.dto.response.UserSummary;
+import com.vinny.project.user.exception.AuthPasswordMismatchException;
 import com.vinny.project.user.exception.DuplicateEmailException;
 import com.vinny.project.user.exception.DuplicateNicknameException;
 import jakarta.validation.Valid;
@@ -32,7 +33,10 @@ public class UserService {
             throw new DuplicateEmailException();
         } else if(userRepository.existsByNickname(request.getNickname())){
             throw new DuplicateNicknameException();
+        } else if(!request.getPassword().equals(request.getPasswordCheck())){
+            throw new AuthPasswordMismatchException();
         }
+
         String userId = UUID.randomUUID().toString();
         User user = new User(userId, request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileImageUrl());
         userRepository.saveUser(user);
@@ -75,6 +79,9 @@ public class UserService {
 
     public void patchPassword(String id, @RequestBody UserPatchPasswordRequest request){
         User user = findById(id);
+        if(!request.getPassword().equals(request.getPasswordCheck())){
+            throw new AuthPasswordMismatchException();
+        }
         user.setPassword(request.getPassword());
     }
 

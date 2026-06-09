@@ -11,12 +11,14 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "입력값이 유효하지 않습니다."),
     MISSING_REQUEST_PARAMETER(HttpStatus.BAD_REQUEST, "입력값이 비었습니다."),
     INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "요청 구조가 잘못되었습니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
-    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
+
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "서명이 맞지 않는 토큰입니다."),
 
     //유저 실패
+    AUTH_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "중복된 이메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
     //게시글 실패

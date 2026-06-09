@@ -41,8 +41,8 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deletePost(@PathVariable String id) {
+    public ResponseEntity<Void> deletePost(@PathVariable String id) {
         postService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("/posts"));
+        return ResponseEntity.noContent().build();
     }
 }

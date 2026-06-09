@@ -22,4 +22,8 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> fail(ErrorCode errorCode) {
         return new ApiResponse<>(false, null, errorCode.getMessage());
     }
+
+    public static <T> ApiResponse<T> fail(String message) {
+        return new ApiResponse<>(false, null, message);
+    }
 }

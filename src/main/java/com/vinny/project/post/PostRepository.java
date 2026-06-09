@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostRepository {
-    private static final Map<String, Post> posts = new  ConcurrentHashMap<>();
+    private static final Map<String, Post> posts = new ConcurrentHashMap<>();
 
     public PostRepository() {
         for(int i = 1; i <= 3; i++) {
