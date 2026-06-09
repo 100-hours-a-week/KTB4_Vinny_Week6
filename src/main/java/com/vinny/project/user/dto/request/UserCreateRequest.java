@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserCreateRequest {
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "올바른 이메일 주소 형식을 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "올바른 이메일 주소 형식을 입력해주세요.")
     private String email;
 
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.")
@@ -16,7 +18,7 @@ public class UserCreateRequest {
     private String passwordCheck;
 
     @NotBlank
-    @Pattern(regexp = "^[^\\s]{1,10}$", message = "닉네임은 공백 없이 10자 이내여야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "닉네임은 공백 없이 10자 이내여야 합니다.")
     private String nickname;
 
     @Pattern(regexp = "^$|^(default\\.png|(https?://).*\\.(jpg|jpeg|png|gif|webp))$", message = "이미지는 URL 형식이어야 합니다.")

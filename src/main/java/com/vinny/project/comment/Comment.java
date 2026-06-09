@@ -1,11 +1,15 @@
 package com.vinny.project.comment;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
     private String writerId;
     private String postId;
@@ -13,12 +17,4 @@ public class Comment {
     @Setter
     private String content;
     private LocalDateTime createdAt;
-
-    public Comment(String writerId,String postId, String commentId, String content, LocalDateTime createdAt) {
-        this.writerId = writerId;
-        this.postId = postId;
-        this.commentId = commentId;
-        this.content = content;
-        this.createdAt = createdAt;
-    }
 }

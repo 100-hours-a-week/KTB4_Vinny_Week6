@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserPatchProfileRequest {
     @NotBlank
     @Pattern(regexp = "^[^\\s]{1,10}$", message = "닉네임은 공백 없이 10자 이내여야 합니다.")
