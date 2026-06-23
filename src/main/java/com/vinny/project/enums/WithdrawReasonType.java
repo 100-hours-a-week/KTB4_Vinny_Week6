@@ -1,7 +1,10 @@
 package com.vinny.project.enums;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum WithdrawReasonType {
     NOT_USED(0),
     FEATURE_MISSING(1),
@@ -14,10 +17,6 @@ public enum WithdrawReasonType {
     private final int code;
     WithdrawReasonType(int code) {
         this.code = code;
-    }
-
-    public int getCode() {
-        return code;
     }
 
     public static WithdrawReasonType ofCode(Integer code) {

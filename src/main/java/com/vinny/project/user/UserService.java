@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -47,7 +46,7 @@ public class UserService {
                 .password(request.getPasswordCheck())
                 .status(UserStatus.ACTIVE)
                 .build();
-        if(request.getProfileImageUrl() == null || request.getProfileImageUrl().equals("")){
+        if(request.getProfileImageUrl() == null || request.getProfileImageUrl().isEmpty()){
             user.changeProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
         }
 

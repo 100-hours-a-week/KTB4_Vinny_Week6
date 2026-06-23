@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vinny.project.comment.Comment;
 import com.vinny.project.comment.exception.CommentNotFoundException;
 import com.vinny.project.user.dto.response.AuthorSummary;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

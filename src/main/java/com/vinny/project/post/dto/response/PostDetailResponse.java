@@ -5,7 +5,6 @@ import com.vinny.project.post.Post;
 import com.vinny.project.post.exception.PostNotFoundException;
 import com.vinny.project.post.image.PostImageResponse;
 import com.vinny.project.user.dto.response.AuthorSummary;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

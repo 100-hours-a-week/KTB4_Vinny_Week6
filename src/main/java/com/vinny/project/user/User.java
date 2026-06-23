@@ -55,11 +55,9 @@ public class User {
 
     private LocalDateTime deleteScheduledAt;
 
-    @Setter
     @Column(columnDefinition = "TINYINT")
     private WithdrawReasonType withdrawReasonType;
 
-    @Setter
     private String withdrawReasonDetail;
 
     protected User() {}
