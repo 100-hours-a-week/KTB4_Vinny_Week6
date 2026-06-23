@@ -2,9 +2,9 @@ package com.vinny.project.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vinny.project.post.Post;
-import com.vinny.project.post.exception.PostNotFoundException;
 import com.vinny.project.post.image.PostImageResponse;
 import com.vinny.project.user.dto.response.AuthorSummary;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDetailResponse {
     private Long postId;
     private String title;
@@ -45,9 +45,7 @@ public class PostDetailResponse {
         this.author = author;
     }
 
-
     public static PostDetailResponse of(Post post, AuthorSummary author, List<PostImageResponse> images) {
-        if (post == null) {throw new PostNotFoundException();}
 
         return PostDetailResponse.builder()
                 .postId(post.getPostId())

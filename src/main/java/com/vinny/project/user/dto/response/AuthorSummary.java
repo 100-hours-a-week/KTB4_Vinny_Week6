@@ -2,12 +2,13 @@ package com.vinny.project.user.dto.response;
 
 import com.vinny.project.user.User;
 import com.vinny.project.user.exception.UserNotFoundException;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthorSummary {
     private String nickname;
     private String profileImageUrl;
@@ -19,9 +20,6 @@ public class AuthorSummary {
     }
 
     public static AuthorSummary from(User user) {
-        if(user == null){
-            throw new UserNotFoundException();
-        }
 
         return AuthorSummary.builder()
                 .nickname(user.getNickname())

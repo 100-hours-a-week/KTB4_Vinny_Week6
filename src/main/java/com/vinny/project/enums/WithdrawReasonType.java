@@ -20,11 +20,10 @@ public enum WithdrawReasonType {
     }
 
     public static WithdrawReasonType ofCode(Integer code) {
-        if (code == null) return null;
 
         return Arrays.stream(WithdrawReasonType.values())
                 .filter(v -> v.getCode() == code)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("알 수 없는 탈퇴 사유 코드입니다: " + code));
+                .orElseThrow(() -> new IllegalArgumentException("알 수 없는 탈퇴 사유입니다"));
     }
 }

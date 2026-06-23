@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Getter
-@Setter
 public class PostCreateRequest {
     @NotBlank(message = "제목은 필수입니다.")
     @Size(min = 1, max = 26, message = "최대 26자까지 가능합니다.")

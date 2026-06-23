@@ -1,13 +1,13 @@
 package com.vinny.project.user.dto.response;
 
 import com.vinny.project.user.User;
-import com.vinny.project.user.exception.UserNotFoundException;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserResponse {
     private String email;
     private String nickname;
@@ -20,9 +20,7 @@ public class UserResponse {
         this.profileImageUrl = profileImageUrl;
     }
 
-
     public static UserResponse from(User user) {
-        if (user == null) {throw new UserNotFoundException();}
 
         return UserResponse.builder()
                 .email(user.getEmail())

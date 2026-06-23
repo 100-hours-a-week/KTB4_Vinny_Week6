@@ -1,11 +1,12 @@
 package com.vinny.project.post.image;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImageResponse {
     private Long id;
     private String imageUrl;

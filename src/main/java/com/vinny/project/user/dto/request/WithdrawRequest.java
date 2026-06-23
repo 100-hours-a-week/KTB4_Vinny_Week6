@@ -2,11 +2,12 @@ package com.vinny.project.user.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WithdrawRequest {
     @NotNull
     @Max(6)

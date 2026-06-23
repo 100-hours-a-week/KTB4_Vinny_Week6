@@ -9,9 +9,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostListResponse {
     private Long postId;
     private String title;
@@ -40,7 +39,6 @@ public class PostListResponse {
     }
 
     public static PostListResponse of(Post post, AuthorSummary author) {
-        if(post == null){throw new PostNotFoundException();}
 
         return PostListResponse.builder()
                 .postId(post.getPostId())

@@ -2,8 +2,8 @@ package com.vinny.project.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vinny.project.comment.Comment;
-import com.vinny.project.comment.exception.CommentNotFoundException;
 import com.vinny.project.user.dto.response.AuthorSummary;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentResponse {
     private Long commentId;
     private String content;
@@ -32,7 +32,6 @@ public class CommentResponse {
     }
 
     public static CommentResponse from(Comment comment) {
-        if(comment == null) { throw new CommentNotFoundException();}
 
         return CommentResponse.builder()
                 .commentId(comment.getCommentId())
