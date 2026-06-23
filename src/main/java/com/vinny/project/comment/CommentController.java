@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts/{postId}/comments")
+//@RequestMapping("/posts/{postId}/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -19,28 +19,24 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping
-    public ApiResponse<CommentResponse> createComment(@PathVariable String postId, @Valid @RequestBody CommentCreateRequest request){
-        return ApiResponse.success(commentService.createComment(postId, request));
+    @PostMapping("/users/{userId}/posts/{postId}/comments")
+    public ApiResponse<CommentResponse> createComment(@PathVariable Long userId,@PathVariable Long postId, @Valid @RequestBody CommentCreateRequest request){
+        return ApiResponse.success(commentService.createComment(userId, postId, request));
     }
 
-    @GetMapping
-    public ApiResponse<List<CommentResponse>> getComments(@PathVariable String postId){
+    @GetMapping("/posts/{postId}/comments")
+    public ApiResponse<List<CommentResponse>> getComments(@PathVariable Long postId){
         return ApiResponse.success(commentService.getComments(postId));
     }
 
-    @PatchMapping("/{commentId}")
-    public ApiResponse<CommentResponse> updateComment(@PathVariable String postId, @PathVariable String commentId,@Valid  @RequestBody CommentCreateRequest request){
-        return ApiResponse.success(commentService.patch(postId, commentId, request));
+    @PatchMapping("/posts/{postId}/comments/{commentId}")
+    public ApiResponse<CommentResponse> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid  @RequestBody CommentCreateRequest request){
+        return ApiResponse.success(commentService.patch(commentId, request));
     }
 
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId){
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ApiResponse<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId){
         commentService.delete(postId, commentId);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.success(null);
     }
-
-
-
-
 }

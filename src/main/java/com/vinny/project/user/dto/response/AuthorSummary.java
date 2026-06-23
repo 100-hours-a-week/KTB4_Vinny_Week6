@@ -8,27 +8,24 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UserResponse {
-    private String email;
+public class AuthorSummary {
     private String nickname;
     private String profileImageUrl;
 
     @Builder
-    private UserResponse(String email, String nickname, String profileImageUrl) {
-        this.email = email;
+    private AuthorSummary(String nickname, String profileImageUrl){
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
     }
 
+    public static AuthorSummary from(User user) {
+        if(user == null){
+            throw new UserNotFoundException();
+        }
 
-    public static UserResponse from(User user) {
-        if (user == null) {throw new UserNotFoundException();}
-
-        return UserResponse.builder()
-                .email(user.getEmail())
+        return AuthorSummary.builder()
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
-
 }

@@ -1,101 +1,116 @@
 package com.vinny.project.post;
 
+import com.vinny.project.enums.PostStatus;
 import com.vinny.project.post.dto.request.PostCreateRequest;
+import com.vinny.project.post.dto.request.PostUpdateRequest;
 import com.vinny.project.post.dto.response.PostDetailResponse;
 import com.vinny.project.post.dto.response.PostListResponse;
 import com.vinny.project.post.exception.PostNotFoundException;
+import com.vinny.project.post.image.PostImage;
+import com.vinny.project.post.image.PostImageRepository;
+import com.vinny.project.post.image.PostImageResponse;
+import com.vinny.project.post.like.PostLikeRepository;
 import com.vinny.project.user.User;
 import com.vinny.project.user.UserService;
-import com.vinny.project.user.dto.response.UserSummary;
+import com.vinny.project.user.dto.response.AuthorSummary;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+    private final PostImageRepository postImageRepository;
+    private final PostLikeRepository postLikeRepository;
 
-    public PostService(PostRepository postRepository, UserService userService) {
-        this.postRepository = postRepository;
-        this.userService = userService;
+    public Post findById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
     }
 
-    public Post createPost(PostCreateRequest request) {
-        String id = UUID.randomUUID().toString();
-        Post post = new Post("1", id, request.getTitle(), request.getContent(), request.getPostImageUrl(), LocalDateTime.now(), 0, 0, 0);
-        postRepository.save(id, post);
-        return post;
+    public Post getReferenceById(Long postId) {
+        return postRepository.getReferenceById(postId);
+    }
+
+    @Transactional
+    public PostDetailResponse createPost(Long userId, PostCreateRequest request) {
+        User author = userService.findById(userId);
+
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .status(PostStatus.ACTIVE)
+                .author(author)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+        List<PostImageResponse> imageResponses = new ArrayList<>();
+
+        for(int i = 0; i < request.getImages().size(); i++){
+            MultipartFile file = request.getImages().get(i);
+            PostImage postImage = PostImage.builder()
+                    .post(savedPost)
+                    .imageUrl(file.getOriginalFilename()) // TODO: S3랑 연결
+                    .sequence(i)
+                    .status(PostStatus.ACTIVE)
+                    .build();
+            PostImage savedPostImages = postImageRepository.save(postImage);
+            imageResponses.add(PostImageResponse.from(savedPostImages));
+
+            if(savedPostImages.getSequence() == 0){
+                savedPost.changeMainImage((savedPostImages));
+            }
+        }
+
+        return PostDetailResponse.of(savedPost, AuthorSummary.from(author), imageResponses);
     }
 
     public List<PostListResponse> getPosts() {
-        return postRepository.findAll().stream()
-                .map(this::convertToPostListResponse)
-                .toList();
+        List<Post> posts = postRepository.findAll();
+
+        return posts.stream()
+                .map(post -> PostListResponse.of(post, AuthorSummary.from(post.getAuthor())))
+                .collect(Collectors.toList());
     }
 
-    public PostDetailResponse getPostDetail(String id) {
-        Post post = postRepository.findById(id);
-        return convertToPostDetailResponse(post);
+    @Transactional
+    public PostDetailResponse getPost(Long id) {
+        Post post =  postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+
+        List<PostImageResponse> imageResponses = post.getPostImages().stream()
+                .map(PostImageResponse::from)
+                .collect(Collectors.toList());
+
+        post.increaseViewCount();
+
+        return PostDetailResponse.of(post, AuthorSummary.from(post.getAuthor()), imageResponses);
     }
 
-    private PostListResponse convertToPostListResponse(Post post) {
-        User writer = userService.findById(post.getWriterId());
-        UserSummary writerSummary = new UserSummary(writer.getNickname(), writer.getProfileImageUrl());
-        return new PostListResponse(
-                post.getPostId(),
-                post.getTitle(),
-                post.getCreatedAt(),
-                post.getLikeCount(),
-                post.getCommentCount(),
-                post.getViewCount(),
-                writerSummary
-        );
+    @Transactional
+    public PostDetailResponse patch(Long postId, PostUpdateRequest request) {
+        Post post = findById(postId);
+
+        post.changeTitle(request.getTitle());
+        post.changeContent(request.getContent());
+
+        //TODO 이미지 수정 구현
+        return PostDetailResponse.of(post, AuthorSummary.from(post.getAuthor()), List.of());
     }
 
-    private PostDetailResponse convertToPostDetailResponse(Post post) {
-        User writer = userService.findById(post.getWriterId());
-        UserSummary writerSummary = new UserSummary(writer.getNickname(), writer.getProfileImageUrl());
-        return new PostDetailResponse(
-                post.getPostId(),
-                post.getTitle(),
-                post.getCreatedAt(),
-                post.getLikeCount(),
-                post.getCommentCount(),
-                post.getViewCount(),
-                writerSummary,
-                post.getContent()
-        );
-    }
+    @Transactional
+    public void delete(Long postId) {
+        Post post = findById(postId);
 
-    public PostDetailResponse patch(String id, @RequestBody PostCreateRequest request) {
-        Post post = postRepository.findById(id);
-        User user = userService.findById(post.getWriterId());
-        UserSummary writerSummary = new UserSummary(user.getNickname(), user.getProfileImageUrl());
+        postLikeRepository.deleteAllByPost(post);
+        postLikeRepository.flush();
 
-        if (post == null) {
-            throw new PostNotFoundException();
-        }
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
-        post.setPostImageUrl(request.getPostImageUrl());
-
-        return new PostDetailResponse(
-                post.getPostId(),
-                post.getTitle(),
-                post.getCreatedAt(),
-                post.getLikeCount(),
-                post.getCommentCount(),
-                post.getViewCount(),
-                writerSummary,
-                post.getContent()
-        );
-    }
-
-    public void delete(String id) {
-        postRepository.delete(id);
+        post.deletePost();
     }
 }

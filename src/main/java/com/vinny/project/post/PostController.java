@@ -1,17 +1,17 @@
 package com.vinny.project.post;
 
 import com.vinny.project.post.dto.request.PostCreateRequest;
+import com.vinny.project.post.dto.request.PostUpdateRequest;
 import com.vinny.project.post.dto.response.PostDetailResponse;
 import com.vinny.project.post.dto.response.PostListResponse;
 import com.vinny.project.response.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+//@RequestMapping("/posts") 토큰 생기기 전까지 주석 처리
 public class PostController {
 
     private final PostService postService;
@@ -20,29 +20,36 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping
-    public ApiResponse<Post> createPost(@Valid @RequestBody PostCreateRequest request) {
-        return ApiResponse.success(postService.createPost(request));
+
+    @PostMapping("/users/{userId}/posts")
+    public ApiResponse<PostDetailResponse> createPost(
+            @PathVariable Long userId,
+            @Valid @ModelAttribute PostCreateRequest request
+            ) {
+        return ApiResponse.success(postService.createPost(userId,request));
     }
 
-    @GetMapping
+    @GetMapping("/posts")
     public ApiResponse<List<PostListResponse>> getPosts(){
         return ApiResponse.success(postService.getPosts());
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<PostDetailResponse> getPost(@PathVariable String id) {
-        return ApiResponse.success(postService.getPostDetail(id));
+    @GetMapping("/posts/{postId}")
+    public ApiResponse<PostDetailResponse> getPost(@PathVariable Long postId) {
+        return ApiResponse.success(postService.getPost(postId));
     }
 
-    @PatchMapping("/{id}")
-    public ApiResponse<PostDetailResponse> updatePost(@PathVariable String id, @Valid @RequestBody PostCreateRequest request) {
-        return ApiResponse.success(postService.patch(id, request));
+    @PatchMapping("/posts/{postId}")
+    public ApiResponse<PostDetailResponse> updatePost(
+            @PathVariable Long postId,
+            @Valid @ModelAttribute PostUpdateRequest request
+    ) {
+        return ApiResponse.success(postService.patch(postId, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable String id) {
-        postService.delete(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/posts/{postId}")
+    public ApiResponse<Void> deletePost(@PathVariable Long postId) {
+        postService.delete(postId);
+        return ApiResponse.success(null);
     }
 }

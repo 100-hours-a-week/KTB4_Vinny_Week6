@@ -1,34 +1,38 @@
 package com.vinny.project.user;
 
-import com.vinny.project.auth.token.TokenRepository;
-import com.vinny.project.exception.BusinessException;
-import com.vinny.project.exception.ErrorCode;
-import com.vinny.project.user.dto.request.UserCreateRequest;
-import com.vinny.project.user.dto.request.UserPatchPasswordRequest;
-import com.vinny.project.user.dto.request.UserPatchProfileRequest;
-import com.vinny.project.user.dto.request.UserSignInRequest;
+import com.vinny.project.enums.UserStatus;
+import com.vinny.project.enums.WithdrawReasonType;
+
+import com.vinny.project.user.dto.request.*;
 import com.vinny.project.user.dto.response.SignInResponse;
 import com.vinny.project.user.dto.response.UserIdResponse;
-import com.vinny.project.user.dto.response.UserSummary;
-import com.vinny.project.user.exception.AuthPasswordMismatchException;
-import com.vinny.project.user.exception.DuplicateEmailException;
-import com.vinny.project.user.exception.DuplicateNicknameException;
-import jakarta.validation.Valid;
+import com.vinny.project.user.dto.response.AuthorSummary;
+import com.vinny.project.user.dto.response.UserResponse;
+import com.vinny.project.user.exception.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private static final String DEFAULT_PROFILE_IMAGE_URL = "https://github.com/user-attachments/assets/1668d816-f8d3-483f-80aa-3b960176c557";
-    public UserService(UserRepository userRepository, TokenRepository tokenRepository) {
-        this.userRepository = userRepository;
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-    public UserIdResponse addUser(UserCreateRequest request){
+    public User getReferenceById(Long userId) {
+        return userRepository.getReferenceById(userId);
+    }
+
+    @Transactional
+    public UserIdResponse addUser(UserCreateRequest request) {
         if(userRepository.existsByEmail(request.getEmail())){
             throw new DuplicateEmailException();
         } else if(userRepository.existsByNickname(request.getNickname())){
@@ -37,65 +41,81 @@ public class UserService {
             throw new AuthPasswordMismatchException();
         }
 
-        String userId = UUID.randomUUID().toString();
-        User user = new User(userId, request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileImageUrl());
-
+        User user = User.builder()
+                .email(request.getEmail())
+                .nickname(request.getNickname())
+                .password(request.getPasswordCheck())
+                .status(UserStatus.ACTIVE)
+                .build();
         if(request.getProfileImageUrl() == null || request.getProfileImageUrl().equals("")){
-            user.setProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
+            user.changeProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
         }
-        userRepository.saveUser(user);
 
-        return new UserIdResponse(user);
+        User savedUser = userRepository.save(user);
+
+        return new UserIdResponse(savedUser.getUserId());
     }
 
-    public SignInResponse signIn(@Valid @RequestBody UserSignInRequest request){
+    @Transactional
+    public SignInResponse signIn( UserSignInRequest request){
         User user = authenticate(request.getEmail(), request.getPassword());
         String token = UUID.randomUUID().toString();
-        return new SignInResponse(token, user.getId());
+        return new SignInResponse(token, user.getUserId());
     }
 
+    @Transactional
     public User authenticate(String email, String password){
         User user = userRepository.findByEmail(email);
-        if(!user.getPassword().equals(password)){
-            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+
+        if (user == null || !user.getPassword().equals(password)) {
+            throw new LoginInputInvalidException();
         }
+        user.updateLastLoginAt();
         return user;
     }
 
-    public List<User> getUsers(){
-        return userRepository.findAll();
+    public UserResponse getUser(Long userId) {
+        User user = findById(userId);
+        return UserResponse.from(user);
     }
 
-    public User findById(String id){
-        return userRepository.findById(id);
-    }
+    @Transactional
+    public AuthorSummary patchProfile(Long userId, UserPatchProfileRequest request){
+        User user = findById(userId);
 
-    public UserSummary patchProfile(String id, @RequestBody UserPatchProfileRequest request){
-        User user = findById(id);
-        if(userRepository.existsByNickname(request.getNickname())){
+        if (!user.getNickname().equals(request.getNickname()) && userRepository.existsByNickname(request.getNickname())) {
             throw new DuplicateNicknameException();
         }
-        if(request.getProfileImageUrl() == null || request.getProfileImageUrl().equals("")){
-            user.setProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
+        if(request.getProfileImageUrl() == null || request.getProfileImageUrl().isEmpty()){
+            user.changeProfileImageUrl(UserService.DEFAULT_PROFILE_IMAGE_URL);
         }
-        user.setNickname(request.getNickname());
-        user.setProfileImageUrl(request.getProfileImageUrl());
-
-        return new UserSummary(user.getNickname(),user.getProfileImageUrl());
+        user.changeNickname(request.getNickname());
+        return AuthorSummary.from(user);
     }
 
-    public void patchPassword(String id, @RequestBody UserPatchPasswordRequest request){
-        User user = findById(id);
+    @Transactional
+    public void patchPassword(Long userId,UserPatchPasswordRequest request){
+        User user = findById(userId);
         if(!request.getPassword().equals(request.getPasswordCheck())){
             throw new AuthPasswordMismatchException();
         }
-        user.setPassword(request.getPassword());
+
+        user.changePassword(request.getPassword());
     }
 
-    public void delete(String id){
-        if(!userRepository.existsById(id)){
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+    @Transactional
+    public void requestWithdraw(Long id, WithdrawRequest request){
+        User user = findById(id);
+        WithdrawReasonType type = WithdrawReasonType.ofCode(request.getWithdrawReasonType());
+        user.withdrawUser(type, request.getWithdrawReasonDetail());
+    }
+
+    @Transactional
+    public void cancelWithdraw(Long id){
+        User user = findById(id);
+        if(user.getStatus() != UserStatus.WITHDRAW_PENDING){
+            throw new UserNotWithdrawException();
         }
-        userRepository.delete(id);
+        user.cancelWithdrawUser();
     }
 }

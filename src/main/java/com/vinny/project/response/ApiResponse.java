@@ -2,18 +2,14 @@ package com.vinny.project.response;
 
 import com.vinny.project.exception.ErrorCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class ApiResponse<T> {
-    private boolean success;
-    private T data;
-    private String message;
-
-    private ApiResponse(boolean success, T data, String message) {
-        this.success = success;
-        this.data = data;
-        this.message = message;
-    }
+    private final boolean success;
+    private final T data;
+    private final String message;
 
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(true, data, null);

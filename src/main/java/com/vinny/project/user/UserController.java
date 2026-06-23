@@ -1,30 +1,22 @@
 package com.vinny.project.user;
 
-
-import com.vinny.project.auth.token.TokenRepository;
 import com.vinny.project.response.ApiResponse;
-import com.vinny.project.user.dto.request.UserCreateRequest;
-import com.vinny.project.user.dto.request.UserPatchPasswordRequest;
-import com.vinny.project.user.dto.request.UserPatchProfileRequest;
-import com.vinny.project.user.dto.request.UserSignInRequest;
+import com.vinny.project.user.dto.request.*;
 import com.vinny.project.user.dto.response.SignInResponse;
 import com.vinny.project.user.dto.response.UserIdResponse;
 import com.vinny.project.user.dto.response.UserResponse;
-import com.vinny.project.user.dto.response.UserSummary;
+import com.vinny.project.user.dto.response.AuthorSummary;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 class UserController {
     private final UserService userService;
-
-    UserController(UserService userService, TokenRepository tokenRepository) {
-        this.userService = userService;
-    }
 
     @PostMapping("/sign-up")
     public ResponseEntity<ApiResponse<UserIdResponse>> signUp(@Valid @RequestBody UserCreateRequest request){
@@ -32,39 +24,47 @@ class UserController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ApiResponse<SignInResponse>> signIn(@Valid @RequestBody UserSignInRequest request){
-        return ResponseEntity.status(200).body(ApiResponse.success(userService.signIn(request)));
+    public ApiResponse<SignInResponse> signIn(@Valid @RequestBody UserSignInRequest request){
+        return ApiResponse.success(userService.signIn(request));
     }
 
     @PostMapping("/logout")
-    public void logout(){
+    public void logout(){}
 
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponse> getUser(@PathVariable Long userId){
+        return ApiResponse.success(userService.getUser(userId));
     }
 
-    @GetMapping
-    public List<User> getUsers(){
-        return userService.getUsers();
+    @PatchMapping("/{userId}/profile")
+    public ApiResponse<AuthorSummary> updateUserProfile(@PathVariable Long userId, @Valid @RequestBody UserPatchProfileRequest request){
+        return ApiResponse.success(userService.patchProfile(userId, request));
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<UserResponse> getUser(@PathVariable String id){
-        return ApiResponse.success(new UserResponse(userService.findById(id)));
-    }
-
-    @PatchMapping("/{id}/profile")
-    public ApiResponse<UserSummary> updateUserProfile(@PathVariable String id, @Valid @RequestBody UserPatchProfileRequest request){
-        return ApiResponse.success(userService.patchProfile(id, request));
-    }
-
-    @PatchMapping("/{id}/password")
-    public ApiResponse<Object> updateUserPassword(@PathVariable String id, @Valid @RequestBody UserPatchPasswordRequest request){
-        userService.patchPassword(id, request);
+    @PatchMapping("/{userId}/password")
+    public ApiResponse<Void> updateUserPassword(@PathVariable Long userId, @Valid @RequestBody UserPatchPasswordRequest request){
+        userService.patchPassword(userId, request);
         return ApiResponse.success(null);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable String id){
-        userService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("/sign-in"));
+    @PatchMapping("/{userId}/withdraw")
+    public ApiResponse<String> requestWithdraw(
+            @PathVariable Long userId,
+            @Valid @RequestBody WithdrawRequest request,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ApiResponse.fail("요청 데이터가 올바르지 않습니다" + errorMessage);
+        }
+
+        userService.requestWithdraw(userId, request);
+        return ApiResponse.success("탈퇴 요청이 완료되었습니다.");
+    }
+
+    @PatchMapping("/{userId}/withdraw-cancel")
+    public ApiResponse<String> cancelWithdraw(@PathVariable Long userId) {
+        userService.cancelWithdraw(userId);
+        return ApiResponse.success("탈퇴 요청이 취소되었습니다. 복귀를 환영합니다.");
     }
 }

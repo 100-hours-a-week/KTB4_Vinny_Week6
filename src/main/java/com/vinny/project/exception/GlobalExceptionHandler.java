@@ -2,8 +2,6 @@ package com.vinny.project.exception;
 
 import com.vinny.project.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,7 +17,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        String errorMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
 
         return ResponseEntity.badRequest().body(ApiResponse.fail(errorMessage));
     }

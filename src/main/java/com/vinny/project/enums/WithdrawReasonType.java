@@ -1,0 +1,31 @@
+package com.vinny.project.enums;
+
+import java.util.Arrays;
+
+public enum WithdrawReasonType {
+    NOT_USED(0),
+    FEATURE_MISSING(1),
+    INCONVENIENT(2),
+    CONTENT_ISSUE(3),
+    PRIVACY_CONCERN(4),
+    FOUND_ALTERNATIVE(5),
+    ETC(6);
+
+    private final int code;
+    WithdrawReasonType(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public static WithdrawReasonType ofCode(Integer code) {
+        if (code == null) return null;
+
+        return Arrays.stream(WithdrawReasonType.values())
+                .filter(v -> v.getCode() == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("알 수 없는 탈퇴 사유 코드입니다: " + code));
+    }
+}

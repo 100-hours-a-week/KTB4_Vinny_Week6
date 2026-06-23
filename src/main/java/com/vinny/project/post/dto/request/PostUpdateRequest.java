@@ -1,21 +1,19 @@
 package com.vinny.project.post.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
-@Setter
-public class PostCreateRequest {
-    @NotBlank(message = "제목은 필수입니다.")
+@AllArgsConstructor
+public class PostUpdateRequest {
     @Size(min = 1, max = 26, message = "최대 26자까지 가능합니다.")
     private String title;
 
-    @NotBlank(message ="내용을 작성해주세요.")
     private String content;
 
     @NotEmpty(message = "이미지는 필수입니다.")
