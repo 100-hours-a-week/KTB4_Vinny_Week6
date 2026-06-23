@@ -57,7 +57,7 @@ public class PostService {
             MultipartFile file = request.getImages().get(i);
             PostImage postImage = PostImage.builder()
                     .post(savedPost)
-                    .imageUrl(file.getOriginalFilename()) // TODO: S3랑 연결
+                    .imageUrl(file.getOriginalFilename())
                     .sequence(i)
                     .status(PostStatus.ACTIVE)
                     .build();
@@ -100,7 +100,6 @@ public class PostService {
         post.changeTitle(request.getTitle());
         post.changeContent(request.getContent());
 
-        //TODO 이미지 수정 구현
         return PostDetailResponse.of(post, AuthorSummary.from(post.getAuthor()), List.of());
     }
 
