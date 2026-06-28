@@ -36,14 +36,14 @@ public class UserService {
             throw new DuplicateEmailException();
         } else if(userRepository.existsByNickname(request.getNickname())){
             throw new DuplicateNicknameException();
-        } else if(!request.getPassword().equals(request.getPasswordCheck())){
+        } else if(!request.getPassword().equals(request.getPasswordConfirm())){
             throw new AuthPasswordMismatchException();
         }
 
         User user = User.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
-                .password(request.getPasswordCheck())
+                .password(request.getPasswordConfirm())
                 .status(UserStatus.ACTIVE)
                 .build();
         if(request.getProfileImageUrl() == null || request.getProfileImageUrl().isEmpty()){
@@ -95,7 +95,7 @@ public class UserService {
     @Transactional
     public void patchPassword(Long userId,UserPatchPasswordRequest request){
         User user = findById(userId);
-        if(!request.getPassword().equals(request.getPasswordCheck())){
+        if(!request.getPassword().equals(request.getPasswordConfirm())){
             throw new AuthPasswordMismatchException();
         }
 

@@ -21,7 +21,7 @@ public class UserCreateRequest {
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호가 다릅니다.")
-    private String passwordCheck;
+    private String passwordConfirm;
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "닉네임은 공백 없이 10자 이내여야 합니다.")

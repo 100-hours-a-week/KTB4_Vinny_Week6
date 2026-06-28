@@ -5,7 +5,6 @@ import com.vinny.project.comment.dto.request.CommentCreateRequest;
 import com.vinny.project.comment.dto.response.CommentResponse;
 import com.vinny.project.response.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

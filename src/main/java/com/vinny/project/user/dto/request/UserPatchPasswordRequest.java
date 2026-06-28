@@ -17,5 +17,5 @@ public class UserPatchPasswordRequest {
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호가 다릅니다.")
-    private String passwordCheck;
+    private String passwordConfirm;
 }
