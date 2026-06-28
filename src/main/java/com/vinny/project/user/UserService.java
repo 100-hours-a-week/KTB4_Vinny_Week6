@@ -79,7 +79,7 @@ public class UserService {
     }
 
     @Transactional
-    public AuthorSummary patchProfile(Long userId, UserPatchProfileRequest request){
+    public AuthorSummary patchProfile(Long userId, UserUpdateProfileRequest request){
         User user = findById(userId);
 
         if (!user.getNickname().equals(request.getNickname()) && userRepository.existsByNickname(request.getNickname())) {
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     @Transactional
-    public void patchPassword(Long userId,UserPatchPasswordRequest request){
+    public void patchPassword(Long userId, UserUpdatePasswordRequest request){
         User user = findById(userId);
         if(!request.getPassword().equals(request.getPasswordConfirm())){
             throw new AuthPasswordMismatchException();
@@ -103,7 +103,7 @@ public class UserService {
     }
 
     @Transactional
-    public void requestWithdraw(Long id, WithdrawRequest request){
+    public void requestWithdraw(Long id, UserWithdrawRequest request){
         User user = findById(id);
         WithdrawReasonType type = WithdrawReasonType.ofCode(request.getWithdrawReasonType());
         user.withdrawUser(type, request.getWithdrawReasonDetail());

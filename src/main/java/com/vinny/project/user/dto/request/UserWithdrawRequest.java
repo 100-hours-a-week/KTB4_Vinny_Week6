@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WithdrawRequest {
+public class UserWithdrawRequest {
     @NotNull
     @Max(6)
     private int withdrawReasonType;

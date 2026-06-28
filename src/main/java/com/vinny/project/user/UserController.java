@@ -37,12 +37,12 @@ class UserController {
     }
 
     @PatchMapping("/{userId}/profile")
-    public ApiResponse<AuthorSummary> updateUserProfile(@PathVariable Long userId, @Valid @RequestBody UserPatchProfileRequest request){
+    public ApiResponse<AuthorSummary> updateUserProfile(@PathVariable Long userId, @Valid @RequestBody UserUpdateProfileRequest request){
         return ApiResponse.success(userService.patchProfile(userId, request));
     }
 
     @PatchMapping("/{userId}/password")
-    public ApiResponse<Void> updateUserPassword(@PathVariable Long userId, @Valid @RequestBody UserPatchPasswordRequest request){
+    public ApiResponse<Void> updateUserPassword(@PathVariable Long userId, @Valid @RequestBody UserUpdatePasswordRequest request){
         userService.patchPassword(userId, request);
         return ApiResponse.success(null);
     }
@@ -50,7 +50,7 @@ class UserController {
     @PatchMapping("/{userId}/withdraw")
     public ApiResponse<String> requestWithdraw(
             @PathVariable Long userId,
-            @Valid @RequestBody WithdrawRequest request,
+            @Valid @RequestBody UserWithdrawRequest request,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
