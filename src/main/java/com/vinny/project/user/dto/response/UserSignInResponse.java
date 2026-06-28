@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class SignInResponse {
+public class UserSignInResponse {
     private String token;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
-
-
 }

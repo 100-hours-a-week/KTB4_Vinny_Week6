@@ -4,7 +4,7 @@ import com.vinny.project.enums.UserStatus;
 import com.vinny.project.enums.WithdrawReasonType;
 
 import com.vinny.project.user.dto.request.*;
-import com.vinny.project.user.dto.response.SignInResponse;
+import com.vinny.project.user.dto.response.UserSignInResponse;
 import com.vinny.project.user.dto.response.UserIdResponse;
 import com.vinny.project.user.dto.response.AuthorSummary;
 import com.vinny.project.user.dto.response.UserResponse;
@@ -56,10 +56,13 @@ public class UserService {
     }
 
     @Transactional
-    public SignInResponse signIn( UserSignInRequest request){
+    public UserSignInResponse signIn(UserSignInRequest request){
         User user = authenticate(request.getEmail(), request.getPassword());
+        if(user.getStatus() == UserStatus.WITHDRAW_PENDING){
+            throw new WithdrawPendingException();
+        }
         String token = UUID.randomUUID().toString();
-        return new SignInResponse(token, user.getUserId());
+        return new UserSignInResponse(token, user.getUserId());
     }
 
     @Transactional
@@ -79,7 +82,7 @@ public class UserService {
     }
 
     @Transactional
-    public AuthorSummary patchProfile(Long userId, UserUpdateProfileRequest request){
+    public AuthorSummary updateProfile(Long userId, UserUpdateProfileRequest request){
         User user = findById(userId);
 
         if (!user.getNickname().equals(request.getNickname()) && userRepository.existsByNickname(request.getNickname())) {
@@ -93,7 +96,7 @@ public class UserService {
     }
 
     @Transactional
-    public void patchPassword(Long userId, UserUpdatePasswordRequest request){
+    public void updatePassword(Long userId, UserUpdatePasswordRequest request){
         User user = findById(userId);
         if(!request.getPassword().equals(request.getPasswordConfirm())){
             throw new AuthPasswordMismatchException();
