@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 //@RequestMapping("/posts") 토큰 생기기 전까지 주석 처리
 public class PostController {
 

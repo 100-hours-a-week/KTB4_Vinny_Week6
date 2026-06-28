@@ -2,7 +2,7 @@ package com.vinny.project.user;
 
 import com.vinny.project.response.ApiResponse;
 import com.vinny.project.user.dto.request.*;
-import com.vinny.project.user.dto.response.SignInResponse;
+import com.vinny.project.user.dto.response.UserSignInResponse;
 import com.vinny.project.user.dto.response.UserIdResponse;
 import com.vinny.project.user.dto.response.UserResponse;
 import com.vinny.project.user.dto.response.AuthorSummary;
@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RequestMapping("/users")
 @RequiredArgsConstructor
 class UserController {
@@ -24,12 +25,14 @@ class UserController {
     }
 
     @PostMapping("/sign-in")
-    public ApiResponse<SignInResponse> signIn(@Valid @RequestBody UserSignInRequest request){
+    public ApiResponse<UserSignInResponse> signIn(@Valid @RequestBody UserSignInRequest request){
         return ApiResponse.success(userService.signIn(request));
     }
 
-    @PostMapping("/logout")
-    public void logout(){}
+    @PostMapping("/sign-out")
+    public ApiResponse<String> signOut(){
+        return ApiResponse.success("/sign-in");
+    }
 
     @GetMapping("/{userId}")
     public ApiResponse<UserResponse> getUser(@PathVariable Long userId){
@@ -38,12 +41,12 @@ class UserController {
 
     @PatchMapping("/{userId}/profile")
     public ApiResponse<AuthorSummary> updateUserProfile(@PathVariable Long userId, @Valid @RequestBody UserUpdateProfileRequest request){
-        return ApiResponse.success(userService.patchProfile(userId, request));
+        return ApiResponse.success(userService.updateProfile(userId, request));
     }
 
     @PatchMapping("/{userId}/password")
     public ApiResponse<Void> updateUserPassword(@PathVariable Long userId, @Valid @RequestBody UserUpdatePasswordRequest request){
-        userService.patchPassword(userId, request);
+        userService.updatePassword(userId, request);
         return ApiResponse.success(null);
     }
 
