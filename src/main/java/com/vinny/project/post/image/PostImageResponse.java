@@ -1,5 +1,7 @@
 package com.vinny.project.post.image;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImageResponse {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String imageUrl;
     private int sequence;

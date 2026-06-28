@@ -1,6 +1,8 @@
 package com.vinny.project.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.vinny.project.comment.Comment;
 import com.vinny.project.user.dto.response.AuthorSummary;
 import lombok.AccessLevel;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentResponse {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long commentId;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

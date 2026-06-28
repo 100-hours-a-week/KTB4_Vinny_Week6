@@ -1,6 +1,8 @@
 package com.vinny.project.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.vinny.project.post.Post;
 import com.vinny.project.post.image.PostImageResponse;
 import com.vinny.project.user.dto.response.AuthorSummary;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDetailResponse {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long postId;
     private String title;
     private String content;
